@@ -36,16 +36,16 @@ def get_pig_latin(formatted_fact):
     return translation_page
 
 
-def get_translation_url(translation_url):
+def get_translation_url(translation_page):
     """
     Gets the translation of the fact
     :param request: URL for translated fact
     :return: new translation URL
     """
-    response = requests.get(translation_url)
+    response = requests.get(translation_page)
 
     soup = BeautifulSoup(response.content, "html.parser")
-    translated_fact = soup.find("body").getText()
+    translated_fact = soup.find("body").getText().replace("Pig Latin", " ").replace("Esultray", " ")
 
     return translated_fact
 
@@ -60,18 +60,35 @@ def home():
     translation_url = get_pig_latin(fact)
     translated_fact = get_translation_url(translation_url)
 
-# is returning pig latin facts, not URL
-    return translated_fact
+    return home_page_template().format(translated_fact)
 
 
-# def home_page_template():
-#     """
-#     Formatting template for home page
-#     :return: HTML template
-#     template = """
-# TO DO: HTML template for landing page
-#     """
-#     return template
+def home_page_template():
+    """
+    Formatting template for home page
+    :return: HTML template
+    """
+    template = """
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+        <title>Random Pig Latin Fact</title>
+      </head>
+      <body>
+        <h1>Welcome to the Random Pig Latin Fact Generator!</h1>
+        <p>{}</p>
+      </body>
+    </html>
+    """
+    return template
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 6787))
